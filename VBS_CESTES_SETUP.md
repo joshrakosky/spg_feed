@@ -12,7 +12,7 @@ This is an ecommerce site specifically for VB Spine. It features:
 ## Database Setup
 
 ### 1. Run the SQL Schema
-Execute the SQL file `supabase-schema-cestes.sql` in your Supabase SQL Editor to create:
+Execute the SQL file `migrations/supabase-schema-cestes.sql` in your Supabase SQL Editor to create:
 - `cestes_products` - Product catalog
 - `cestes_orders` - Order information (with email uniqueness constraint)
 - `cestes_order_items` - Individual items in each order
@@ -110,7 +110,7 @@ VB Purple (#663399) is used throughout the application:
 - `app/review/page.tsx` - Review page for single product
 - `app/api/orders/route.ts` - Order API using cestes tables
 - `app/admin/page.tsx` - Admin page using cestes tables
-- `supabase-schema-cestes.sql` - Database schema
+- `migrations/supabase-schema-cestes.sql` - Database schema
 - `lib/shippingConfig.ts` - Fixed shipping address configuration
 - `lib/imageUtils.ts` - Image path generation utilities
 - `components/VBSLogo.tsx` - VB Spine logo component

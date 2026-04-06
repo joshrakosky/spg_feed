@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     // Handle cart (array of products) or single product
     const cartItems = Array.isArray(product) ? product : [product]
 
-    // Multiple orders per email allowed for testing. Run supabase-migration-allow-multiple-orders.sql in Supabase to drop UNIQUE(email) constraint.
+    // Multiple orders per email allowed for testing. Run migrations/supabase-migration-allow-multiple-orders.sql in Supabase to drop UNIQUE(email) constraint.
 
     // Generate order number
     const orderNumber = await generateOrderNumber()

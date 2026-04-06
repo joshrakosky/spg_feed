@@ -9,6 +9,7 @@ UPDATE cestes_products SET vendor_item_num = 'WK-1W' WHERE customer_item_number 
 UPDATE cestes_products SET vendor_item_num = 'SX-5' WHERE customer_item_number = 'CES-FLEECE-MEN';
 UPDATE cestes_products SET vendor_item_num = 'SX-5W' WHERE customer_item_number = 'CES-FLEECE-WOMEN';
 UPDATE cestes_products SET vendor_item_num = 'FPL-3M' WHERE customer_item_number IN ('CES-HOODY-MEN', 'CES-QZIP-MEN');
+UPDATE cestes_products SET vendor_item_num = 'WK-3W' WHERE customer_item_number = 'CES-HOODY-WOMEN';
 UPDATE cestes_products SET vendor_item_num = 'FPL-3W' WHERE customer_item_number = 'CES-QZIP-WOMEN';
 UPDATE cestes_products SET vendor_item_num = 'TG-1' WHERE customer_item_number = 'CES-TEE-MEN';
 UPDATE cestes_products SET vendor_item_num = 'TG-1W' WHERE customer_item_number = 'CES-TEE-WOMEN';

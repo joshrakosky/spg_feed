@@ -22,7 +22,7 @@ npm install
 ### 2. Set Up Supabase
 
 1. Create a new Supabase project at [supabase.com](https://supabase.com)
-2. Run the SQL schema from `supabase-schema-cestes.sql` in your Supabase SQL Editor
+2. Run the SQL schema from [`migrations/supabase-schema-cestes.sql`](migrations/supabase-schema-cestes.sql) in your Supabase SQL Editor
 3. Add your Supabase credentials to `.env.local`:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
@@ -98,7 +98,7 @@ Admin access is granted to `josh.rakosky@proforma.com` by default.
 - **cestes_orders**: Order information (with email uniqueness constraint)
 - **cestes_order_items**: Individual items in each order
 
-See `supabase-schema-cestes.sql` for the complete schema.
+See [`migrations/supabase-schema-cestes.sql`](migrations/supabase-schema-cestes.sql) for the complete schema.
 
 ## Color Scheme
 
