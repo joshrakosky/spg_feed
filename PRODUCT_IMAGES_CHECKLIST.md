@@ -28,14 +28,15 @@ Place all files in `public/images/`
 | Product | SKU | Colors | Image Files |
 |---------|-----|--------|-------------|
 | Stormtech Men's Ashburn Pullover Hoody | CES-HOODY-MEN | Black, Graphite | `CES-HOODY-MEN_Black_Purple.jpg` `CES-HOODY-MEN_Black_White.jpg` `CES-HOODY-MEN_Graphite_Purple.jpg` `CES-HOODY-MEN_Graphite_White.jpg` |
+| Stormtech Women's Ashburn Pullover Hoody | CES-HOODY-WOMEN | Black only; sizes XS–3XL (same `{SKU}_Black_{Logo}` naming as men's Black) | `CES-HOODY-WOMEN_Black_Purple.jpg` `CES-HOODY-WOMEN_Black_White.jpg` |
 | Stormtech Women's Ashburn Zip Pullover | CES-QZIP-WOMEN | Black, Ash | `CES-QZIP-WOMEN_Black_Purple.jpg` `CES-QZIP-WOMEN_Black_White.jpg` `CES-QZIP-WOMEN_Ash_Purple.jpg` `CES-QZIP-WOMEN_Ash_White.jpg` |
 | Stormtech Men's Ashburn Zip Pullover | CES-QZIP-MEN | Black, Ash | `CES-QZIP-MEN_Black_Purple.jpg` `CES-QZIP-MEN_Black_White.jpg` `CES-QZIP-MEN_Ash_Purple.jpg` `CES-QZIP-MEN_Ash_White.jpg` |
 
 ## Tees
 | Product | SKU | Colors | Image Files |
 |---------|-----|--------|-------------|
-| Stormtech Men's Ashburn Tee | CES-TEE-MEN | Black, Graphite Heather | `CES-TEE-MEN_Black_Purple.jpg` `CES-TEE-MEN_Black_White.jpg` `CES-TEE-MEN_GraphiteHeather_Purple.jpg` `CES-TEE-MEN_GraphiteHeather_White.jpg` |
-| Stormtech Women's Ashburn Tee | CES-TEE-WOMEN | Black, Graphite Heather | `CES-TEE-WOMEN_Black_Purple.jpg` `CES-TEE-WOMEN_Black_White.jpg` `CES-TEE-WOMEN_GraphiteHeather_Purple.jpg` `CES-TEE-WOMEN_GraphiteHeather_White.jpg` |
+| Stormtech Men's Stockton Short Sleeve Tee | CES-TEE-MEN | Black, Granite | `CES-TEE-MEN_Black_Purple.jpg` `CES-TEE-MEN_Black_White.jpg` `CES-TEE-MEN_Granite_Purple.jpg` `CES-TEE-MEN_Granite_White.jpg` |
+| Stormtech Women's Stockton Short Sleeve Tee | CES-TEE-WOMEN | Black, Granite | `CES-TEE-WOMEN_Black_Purple.jpg` `CES-TEE-WOMEN_Black_White.jpg` `CES-TEE-WOMEN_Granite_Purple.jpg` `CES-TEE-WOMEN_Granite_White.jpg` |
 
 ## Beanies
 | Product | SKU | Colors | Image Files |
@@ -51,7 +52,7 @@ Place all files in `public/images/`
 ## Scarf
 | Product | SKU | Colors | Image Files |
 |---------|-----|--------|-------------|
-| Avalante Knit Scarf | CES-SCARF | Black, **Charcoal Heather** | `CES-SCARF_Black_Purple.jpg` `CES-SCARF_Black_White.jpg` `CES-SCARF_CharcoalHeather_Purple.jpg` `CES-SCARF_CharcoalHeather_White.jpg` |
+| Avalante Knit Scarf | CES-SCARF | Black only (Charcoal Heather removed) | `CES-SCARF_Black_Purple.jpg` `CES-SCARF_Black_White.jpg` |
 
 ---
 
@@ -82,6 +83,8 @@ CES-HOODY-MEN_Black_Purple.jpg
 CES-HOODY-MEN_Black_White.jpg
 CES-HOODY-MEN_Graphite_Purple.jpg
 CES-HOODY-MEN_Graphite_White.jpg
+CES-HOODY-WOMEN_Black_Purple.jpg
+CES-HOODY-WOMEN_Black_White.jpg
 CES-QZIP-WOMEN_Black_Purple.jpg
 CES-QZIP-WOMEN_Black_White.jpg
 CES-QZIP-WOMEN_Ash_Purple.jpg
@@ -92,12 +95,12 @@ CES-QZIP-MEN_Ash_Purple.jpg
 CES-QZIP-MEN_Ash_White.jpg
 CES-TEE-MEN_Black_Purple.jpg
 CES-TEE-MEN_Black_White.jpg
-CES-TEE-MEN_GraphiteHeather_Purple.jpg
-CES-TEE-MEN_GraphiteHeather_White.jpg
+CES-TEE-MEN_Granite_Purple.jpg
+CES-TEE-MEN_Granite_White.jpg
 CES-TEE-WOMEN_Black_Purple.jpg
 CES-TEE-WOMEN_Black_White.jpg
-CES-TEE-WOMEN_GraphiteHeather_Purple.jpg
-CES-TEE-WOMEN_GraphiteHeather_White.jpg
+CES-TEE-WOMEN_Granite_Purple.jpg
+CES-TEE-WOMEN_Granite_White.jpg
 CES-BEANIE-NOVARRA_CarbonHeather_Purple.jpg
 CES-BEANIE-NOVARRA_CarbonHeather_White.jpg
 CES-BEANIE-VINTAGE_Dolphin_Purple.jpg
@@ -108,6 +111,4 @@ CES-GLOVES_Grey_Purple.jpg
 CES-GLOVES_Grey_White.jpg
 CES-SCARF_Black_Purple.jpg
 CES-SCARF_Black_White.jpg
-CES-SCARF_CharcoalHeather_Purple.jpg
-CES-SCARF_CharcoalHeather_White.jpg
 ```

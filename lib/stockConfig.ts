@@ -14,10 +14,11 @@ const CUSTOMER_TO_VENDOR: Record<string, string> = {
   'CES-FLEECE-MEN': 'SX-5',
   'CES-FLEECE-WOMEN': 'SX-5W',
   'CES-HOODY-MEN': 'FPL-3M',
+  'CES-HOODY-WOMEN': 'WK-3W',
   'CES-QZIP-MEN': 'FPL-3M',
   'CES-QZIP-WOMEN': 'FPL-3W',
-  'CES-TEE-MEN': 'TG-1',
-  'CES-TEE-WOMEN': 'TG-1W',
+  'CES-TEE-MEN': 'TSX-6M',
+  'CES-TEE-WOMEN': 'TSX-6W',
   'CES-BEANIE-NOVARRA': 'BTV-1',
   'CES-BEANIE-VINTAGE': 'BTC-1',
   'CES-GLOVES': 'GLX-1',
@@ -34,18 +35,44 @@ export const STOCK_RULES: Record<string, StockRule> = {
     out_of_stock: [{ color: 'Black', sizes: ['S', 'L'] }],
     low_stock: [{ color: 'Black', sizes: ['XL'] }],
   },
-  'TG-1': {
-    out_of_stock: [{ color: 'Graphite Heather', sizes: ['4XL', '5XL'] }],
-  },
-  'TG-1W': {
-    out_of_stock: [{ color: 'Black', sizes: ['L', '2XL'] }],
-    low_stock: [{ color: 'Black', sizes: ['S'] }],
-  },
+  // TSX-6M / TSX-6W (Stockton tees): add OOS/low rules here when inventory changes
 }
 
 /** Normalize for comparison - case-insensitive, trim, collapse spaces for flexible matching */
 function normalize(s: string): string {
   return s.trim().toLowerCase().replace(/\s+/g, '')
+}
+
+/**
+ * When a color does not offer the full available_sizes range, list allowed sizes here.
+ * Sizes must match parseSizeOptions output (English: S, M, L, XL, 2XL, …).
+ */
+const COLOR_CATALOG_SIZES: Record<string, Record<string, string[]>> = {
+  'CES-TEE-MEN': {
+    Black: ['S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL'],
+    Granite: ['S', 'M', 'L', 'XL', '2XL', '3XL'],
+  },
+  'CES-TEE-WOMEN': {
+    Black: ['S', 'M', 'L', 'XL', '2XL', '3XL'],
+    Granite: ['S', 'M', 'L', 'XL', '2XL'],
+  },
+}
+
+/** Narrow parsed sizes to what is sold for this SKU + color (e.g. Stockton tee ranges). */
+export function getCatalogSizesForColor(
+  customerItemNumber: string | null | undefined,
+  color: string | null | undefined,
+  parsedSizes: string[]
+): string[] {
+  if (!customerItemNumber) return parsedSizes
+  const bySku = COLOR_CATALOG_SIZES[customerItemNumber]
+  if (!bySku) return parsedSizes
+  // Per-color catalog: choose color before sizes apply
+  if (!color) return []
+  const key = Object.keys(bySku).find((k) => normalize(k) === normalize(color))
+  if (!key) return parsedSizes
+  const allowed = new Set(bySku[key].map((s) => normalize(s)))
+  return parsedSizes.filter((s) => allowed.has(normalize(s)))
 }
 
 export function getStockRules(

@@ -2,11 +2,11 @@
 -- Run in Supabase SQL Editor
 -- Frontend uses 'price' for display and budget - must update it to reflect unit_sell
 
--- CES-VEST-MEN
-UPDATE cestes_products SET unit_cost = 28.75, unit_sell = 57.55, price = 57.55 WHERE customer_item_number = 'CES-VEST-MEN';
+-- CES-VEST-MEN (Orbiter)
+UPDATE cestes_products SET unit_cost = 34.57, unit_sell = 69.20, price = 69.20 WHERE customer_item_number = 'CES-VEST-MEN';
 
--- CES-VEST-WOMEN
-UPDATE cestes_products SET unit_cost = 28.75, unit_sell = 57.55, price = 57.55 WHERE customer_item_number = 'CES-VEST-WOMEN';
+-- CES-VEST-WOMEN (Orbiter)
+UPDATE cestes_products SET unit_cost = 34.57, unit_sell = 69.20, price = 69.20 WHERE customer_item_number = 'CES-VEST-WOMEN';
 
 -- CES-CREW-MEN (Ashburn Crew)
 UPDATE cestes_products SET unit_cost = 20, unit_sell = 51, price = 51 WHERE customer_item_number = 'CES-CREW-MEN';
@@ -32,11 +32,11 @@ UPDATE cestes_products SET unit_cost = 28.78, unit_sell = 57.6, price = 57.6 WHE
 -- CES-QZIP-WOMEN
 UPDATE cestes_products SET unit_cost = 28.78, unit_sell = 57.6, price = 57.6 WHERE customer_item_number = 'CES-QZIP-WOMEN';
 
--- CES-TEE-MEN
-UPDATE cestes_products SET unit_cost = 12.37, unit_sell = 24.75, price = 24.75 WHERE customer_item_number = 'CES-TEE-MEN';
+-- CES-TEE-MEN (Stockton Short Sleeve)
+UPDATE cestes_products SET unit_cost = 11.88, unit_sell = 23.75, price = 23.75 WHERE customer_item_number = 'CES-TEE-MEN';
 
--- CES-TEE-WOMEN
-UPDATE cestes_products SET unit_cost = 12.37, unit_sell = 24.75, price = 24.75 WHERE customer_item_number = 'CES-TEE-WOMEN';
+-- CES-TEE-WOMEN (Stockton Short Sleeve)
+UPDATE cestes_products SET unit_cost = 11.88, unit_sell = 23.75, price = 23.75 WHERE customer_item_number = 'CES-TEE-WOMEN';
 
 -- CES-BEANIE-VINTAGE
 UPDATE cestes_products SET unit_cost = 12.37, unit_sell = 25.5, price = 25.5 WHERE customer_item_number = 'CES-BEANIE-VINTAGE';

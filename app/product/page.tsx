@@ -10,7 +10,14 @@ import HelpIcon from '@/components/HelpIcon'
 import CartIcon from '@/components/CartIcon'
 import { getProductImagePath } from '@/lib/imageUtils'
 import { parseSizeOptions, getSizeDisplayLabel } from '@/lib/sizeUtils'
-import { getStockRules, isOutOfStock, isLowStock, getAvailableSizes, isColorFullyOOS } from '@/lib/stockConfig'
+import {
+  getStockRules,
+  isOutOfStock,
+  isLowStock,
+  getAvailableSizes,
+  isColorFullyOOS,
+  getCatalogSizesForColor,
+} from '@/lib/stockConfig'
 import { useLanguage } from '@/lib/languageContext'
 
 const MAX_BUDGET = 100
@@ -48,8 +55,13 @@ export default function ProductPage() {
     selectedProduct?.vendor_item_num as string | undefined,
     selectedProduct?.customer_item_number
   )
-  const parsedSizes = selectedProduct ? parseSizeOptions(selectedProduct.available_sizes) : []
-  const availableSizesForColor = getAvailableSizes(stockRules, selectedColor, parsedSizes)
+  const parsedSizesAll = selectedProduct ? parseSizeOptions(selectedProduct.available_sizes) : []
+  const catalogSizesForColor = getCatalogSizesForColor(
+    selectedProduct?.customer_item_number,
+    selectedColor,
+    parsedSizesAll
+  )
+  const availableSizesForColor = getAvailableSizes(stockRules, selectedColor, catalogSizesForColor)
 
   // Calculate totals (price * quantity per item)
   const currentTotal = cart.reduce((sum, item) => sum + (item.price * (item.quantity ?? 1)), 0)
@@ -99,15 +111,22 @@ export default function ProductPage() {
     cartRef.current = cart
   }, [cart])
 
-  // Clear selectedSize when it becomes OOS for the selected color (e.g. after color change)
+  // Clear selectedSize when it becomes OOS or invalid for the selected color (e.g. after color change)
   useEffect(() => {
-    if (selectedProduct?.requires_size && selectedSize && stockRules) {
-      if (isOutOfStock(stockRules, selectedColor, selectedSize)) {
-        const available = getAvailableSizes(stockRules, selectedColor, parsedSizes)
-        setSelectedSize(available[0] || '')
-      }
+    if (!selectedProduct?.requires_size || !selectedSize) return
+    const catalog = getCatalogSizesForColor(
+      selectedProduct.customer_item_number,
+      selectedColor,
+      parsedSizesAll
+    )
+    const available = getAvailableSizes(stockRules, selectedColor, catalog)
+    const invalid =
+      !catalog.some((s) => s === selectedSize) ||
+      isOutOfStock(stockRules, selectedColor, selectedSize)
+    if (invalid) {
+      setSelectedSize(available[0] || '')
     }
-  }, [selectedColor, selectedProduct, stockRules])
+  }, [selectedColor, selectedProduct, stockRules, selectedSize, parsedSizesAll])
 
   // Save cart to sessionStorage whenever it changes (from product page adding items)
   useEffect(() => {
@@ -248,10 +267,21 @@ export default function ProductPage() {
         return
       }
 
-      // Stock validation - block OOS items
-      if (selectedProduct.requires_size && isOutOfStock(stockRules, selectedColor, selectedSize)) {
-        setError(t('oosError'))
-        return
+      // Stock validation - block OOS items; ensure size is valid for color (e.g. Stockton tee ranges)
+      if (selectedProduct.requires_size) {
+        const catalog = getCatalogSizesForColor(
+          selectedProduct.customer_item_number,
+          selectedColor,
+          parseSizeOptions(selectedProduct.available_sizes)
+        )
+        if (catalog.length > 0 && !catalog.includes(selectedSize)) {
+          setError(t('pleaseSelectSize'))
+          return
+        }
+        if (isOutOfStock(stockRules, selectedColor, selectedSize)) {
+          setError(t('oosError'))
+          return
+        }
       }
 
       // Logo color validation - required when product has logo options
@@ -386,20 +416,29 @@ export default function ProductPage() {
                 if (product) {
                   const rules = getStockRules(product.vendor_item_num as string | undefined, product.customer_item_number)
                   const sizes = parseSizeOptions(product?.available_sizes)
+                  let colorForSizes: string | undefined
                   if (product?.requires_color && product.available_colors && product.available_colors.length > 0) {
-                    // Pick first color that has available sizes (not fully OOS)
+                    // Pick first color that has available sizes (not fully OOS); respect per-color size catalogs (e.g. tees)
                     const firstAvailableColor = product.available_colors.find(
-                      (c) => !isColorFullyOOS(rules, c, sizes)
+                      (c) =>
+                        !isColorFullyOOS(
+                          rules,
+                          c,
+                          getCatalogSizesForColor(product.customer_item_number, c, sizes)
+                        )
                     ) ?? product.available_colors[0]
                     setSelectedColor(firstAvailableColor)
+                    colorForSizes = firstAvailableColor
                   } else if (product?.requires_color && product.available_colors?.includes('Black')) {
                     setSelectedColor('Black')
+                    colorForSizes = 'Black'
                   }
                   if (product?.requires_size && sizes.length === 1) {
                     setSelectedSize(sizes[0])
                   } else if (product?.requires_size && sizes.length > 0) {
-                    const firstColor = product.available_colors?.[0]
-                    const avail = getAvailableSizes(rules, firstColor, sizes)
+                    const fc = colorForSizes ?? product.available_colors?.[0]
+                    const catalog = getCatalogSizesForColor(product.customer_item_number, fc, sizes)
+                    const avail = getAvailableSizes(rules, fc, catalog)
                     setSelectedSize(avail[0] || '')
                   }
                   const productWithLogo = product as { logo_colors_available?: string } | undefined
@@ -529,14 +568,27 @@ export default function ProductPage() {
                       setSelectedColor(newColor)
                       setError('')
                       // When color changes, set size to first available (current may be OOS for new color)
-                      const avail = getAvailableSizes(stockRules, newColor, parsedSizes)
+                      const catalog = getCatalogSizesForColor(
+                        selectedProduct.customer_item_number,
+                        newColor,
+                        parsedSizesAll
+                      )
+                      const avail = getAvailableSizes(stockRules, newColor, catalog)
                       setSelectedSize(avail[0] || '')
                     }}
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#663399] focus:border-transparent text-black bg-white"
                   >
                     <option value="">{t('selectColor')}</option>
                     {selectedProduct.available_colors.map((color) => {
-                      const fullyOOS = isColorFullyOOS(stockRules, color, parsedSizes)
+                      const fullyOOS = isColorFullyOOS(
+                        stockRules,
+                        color,
+                        getCatalogSizesForColor(
+                          selectedProduct.customer_item_number,
+                          color,
+                          parsedSizesAll
+                        )
+                      )
                       return (
                         <option key={color} value={color} disabled={fullyOOS}>
                           {color}{fullyOOS ? t('outOfStock') : ''}
@@ -577,7 +629,7 @@ export default function ProductPage() {
                 )
               })()}
 
-              {selectedProduct.requires_size && parsedSizes.length > 0 && (
+              {selectedProduct.requires_size && parsedSizesAll.length > 0 && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     {t('size')}
