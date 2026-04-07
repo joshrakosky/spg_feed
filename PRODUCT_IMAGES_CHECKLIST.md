@@ -29,8 +29,8 @@ Place all files in `public/images/`
 |---------|-----|--------|-------------|
 | Stormtech Men's Ashburn Pullover Hoody | CES-HOODY-MEN | Black, Graphite | `CES-HOODY-MEN_Black_Purple.jpg` `CES-HOODY-MEN_Black_White.jpg` `CES-HOODY-MEN_Graphite_Purple.jpg` `CES-HOODY-MEN_Graphite_White.jpg` |
 | Stormtech Women's Ashburn Pullover Hoody | CES-HOODY-WOMEN | Black only; sizes XS–3XL (same `{SKU}_Black_{Logo}` naming as men's Black) | `CES-HOODY-WOMEN_Black_Purple.jpg` `CES-HOODY-WOMEN_Black_White.jpg` |
-| Stormtech Women's Ashburn Zip Pullover | CES-QZIP-WOMEN | Black, Ash | `CES-QZIP-WOMEN_Black_Purple.jpg` `CES-QZIP-WOMEN_Black_White.jpg` `CES-QZIP-WOMEN_Ash_Purple.jpg` `CES-QZIP-WOMEN_Ash_White.jpg` |
-| Stormtech Men's Ashburn Zip Pullover | CES-QZIP-MEN | Black, Ash | `CES-QZIP-MEN_Black_Purple.jpg` `CES-QZIP-MEN_Black_White.jpg` `CES-QZIP-MEN_Ash_Purple.jpg` `CES-QZIP-MEN_Ash_White.jpg` |
+| Stormtech Men's Sonora 1/4 Zip Pullover | CES-QZIP-MEN | Black, Ash; sizes S–5XL | `CES-QZIP-MEN_Black_Purple.jpg` `CES-QZIP-MEN_Black_White.jpg` `CES-QZIP-MEN_Ash_Purple.jpg` `CES-QZIP-MEN_Ash_White.jpg` |
+| Stormtech Women's Sonora 1/4 Zip Pullover | CES-QZIP-WOMEN | Black, Ash; sizes XS–3XL | `CES-QZIP-WOMEN_Black_Purple.jpg` `CES-QZIP-WOMEN_Black_White.jpg` `CES-QZIP-WOMEN_Ash_Purple.jpg` `CES-QZIP-WOMEN_Ash_White.jpg` |
 
 ## Tees
 | Product | SKU | Colors | Image Files |
@@ -41,8 +41,8 @@ Place all files in `public/images/`
 ## Beanies
 | Product | SKU | Colors | Image Files |
 |---------|-----|--------|-------------|
-| Novarra Knit Beanie | CES-BEANIE-NOVARRA | Carbon Heather | `CES-BEANIE-NOVARRA_CarbonHeather_Purple.jpg` `CES-BEANIE-NOVARRA_CarbonHeather_White.jpg` |
-| Vintage Knit Beanie | CES-BEANIE-VINTAGE | Dolphin | `CES-BEANIE-VINTAGE_Dolphin_Purple.jpg` `CES-BEANIE-VINTAGE_Dolphin_White.jpg` |
+| Stormtech Novarra Knit Beanie | CES-BEANIE-NOVARRA | Carbon Heather | `CES-BEANIE-NOVARRA_CarbonHeather_Purple.jpg` `CES-BEANIE-NOVARRA_CarbonHeather_White.jpg` |
+| Stormtech Vintage Knit Beanie | CES-BEANIE-VINTAGE | Dolphin | `CES-BEANIE-VINTAGE_Dolphin_Purple.jpg` `CES-BEANIE-VINTAGE_Dolphin_White.jpg` |
 
 ## Gloves
 | Product | SKU | Colors | Image Files |
