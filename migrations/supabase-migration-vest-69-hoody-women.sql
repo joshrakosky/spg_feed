@@ -27,10 +27,10 @@ SELECT
   ARRAY['Black'],
   ARRAY['XS-3XL'],
   'CES-HOODY-WOMEN',
-  76.35
+  23.75
 WHERE NOT EXISTS (
   SELECT 1 FROM cestes_products WHERE customer_item_number = 'CES-HOODY-WOMEN'
 );
 
 -- WHERE must scope to this SKU only (never all rows).
-UPDATE cestes_products SET name = 'Stormtech Women''s Ashburn Pullover Hoody', description = 'Stormtech women''s pullover hoody; VB Spine logo in purple or white.', available_colors = ARRAY['Black'], available_sizes = ARRAY['XS-3XL'], vendor_item_num = 'WK-3W', unit_cost = 38.16, unit_sell = 76.35, price = 76.35, logo_colors_available = 'Purple, White' WHERE customer_item_number = 'CES-HOODY-WOMEN';
+UPDATE cestes_products SET name = 'Stormtech Women''s Ashburn Pullover Hoody', description = 'Stormtech women''s pullover hoody; VB Spine logo in purple or white.', available_colors = ARRAY['Black'], available_sizes = ARRAY['XS-3XL'], vendor_item_num = 'WK-3W', unit_cost = 11.88, unit_sell = 23.75, price = 23.75, logo_colors_available = 'Purple, White' WHERE customer_item_number = 'CES-HOODY-WOMEN';

@@ -20,11 +20,11 @@ UPDATE cestes_products SET unit_cost = 30.49, unit_sell = 61.00, price = 61.00 W
 -- CES-FLEECE-WOMEN (Montauk)
 UPDATE cestes_products SET unit_cost = 30.49, unit_sell = 61.00, price = 61.00 WHERE customer_item_number = 'CES-FLEECE-WOMEN';
 
--- CES-HOODY-MEN
-UPDATE cestes_products SET unit_cost = 38.16, unit_sell = 76.35, price = 76.35 WHERE customer_item_number = 'CES-HOODY-MEN';
+-- CES-HOODY-MEN (Ashburn pullover hoody)
+UPDATE cestes_products SET unit_cost = 11.88, unit_sell = 23.75, price = 23.75 WHERE customer_item_number = 'CES-HOODY-MEN';
 
--- CES-HOODY-WOMEN
-UPDATE cestes_products SET unit_cost = 38.16, unit_sell = 76.35, price = 76.35 WHERE customer_item_number = 'CES-HOODY-WOMEN';
+-- CES-HOODY-WOMEN (Ashburn pullover hoody)
+UPDATE cestes_products SET unit_cost = 11.88, unit_sell = 23.75, price = 23.75 WHERE customer_item_number = 'CES-HOODY-WOMEN';
 
 -- CES-QZIP-MEN (Sonora 1/4 Zip, FPL-3M)
 UPDATE cestes_products SET unit_cost = 26.23, unit_sell = 52.50, price = 52.50 WHERE customer_item_number = 'CES-QZIP-MEN';
