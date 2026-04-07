@@ -74,7 +74,7 @@ export default function AdminPage() {
     // Fetch all products with fulfillment columns for export
     const { data: productsData, error: productsError } = await supabase
       .from('cestes_products')
-      .select('id, deco, vendor_ref, vendor_item_num, unit_cost, unit_sell, logo, logo_colors_available, logo_location, notes')
+      .select('id, vendor_ref, vendor_item_num, unit_cost, unit_sell, logo, logo_colors_available, logo_location')
 
     if (productsError) {
       alert('Failed to load product information. Please try again.')
@@ -107,7 +107,6 @@ export default function AdminPage() {
           'Logo': product?.logo ?? '',
           'Logo Color': itemWithLogo.logo_color ?? '',
           'Logo Location': product?.logo_location ?? '',
-          'Notes': product?.notes ?? '',
           'Order Date': new Date(order.created_at).toLocaleDateString()
         }
       })
@@ -153,8 +152,6 @@ export default function AdminPage() {
         'Logo': product?.logo ?? '',
         'Logo Color': logoColor !== 'N/A' ? logoColor : '',
         'Logo Location': product?.logo_location ?? '',
-        'Deco': product?.deco ?? '',
-        'Notes': product?.notes ?? '',
         'Quantity': data.quantity
       }
     }).sort((a, b) => {
