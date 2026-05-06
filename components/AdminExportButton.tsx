@@ -10,7 +10,7 @@ export default function AdminExportButton() {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    // Admin access is granted via access code (stored in sessionStorage)
+    // Admin access is granted via admin code on the landing page (sessionStorage)
     const adminAuth = sessionStorage.getItem('adminAuth')
     const isAdminUser = adminAuth === 'true'
     setIsAdmin(Boolean(isAdminUser))

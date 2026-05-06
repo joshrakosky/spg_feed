@@ -8,9 +8,9 @@ import HelpIcon from '@/components/HelpIcon'
 import AnimatedBackground from '@/components/AnimatedBackground'
 import { useLanguage } from '@/lib/languageContext'
 
-// Access code for entry - email is collected during checkout
-const ACCESS_CODE = 'CestasSpine*2026!'
-// Admin code - grants export access (separate from access code)
+// Former public access code — no longer valid; show store-closed message if entered
+const LEGACY_PUBLIC_ACCESS_CODE = 'CestasSpine*2026!'
+// Admin-only entry; grants catalog access and export UI
 const ADMIN_CODE = 'admin'
 
 export default function LandingPage() {
@@ -27,18 +27,20 @@ export default function LandingPage() {
       return
     }
 
-    if (code !== ACCESS_CODE && code !== ADMIN_CODE) {
+    // Retired public code: tell visitors ordering ended
+    if (code === LEGACY_PUBLIC_ACCESS_CODE) {
+      setError(t('storeClosedMay5'))
+      return
+    }
+
+    if (code !== ADMIN_CODE) {
       setError(t('accessCodeInvalid'))
       return
     }
 
-    // Grant access - email will be collected at checkout
+    // Admin entry — email is collected at checkout
     sessionStorage.setItem('accessGranted', 'true')
-    if (code === ADMIN_CODE) {
-      sessionStorage.setItem('adminAuth', 'true')
-    } else {
-      sessionStorage.removeItem('adminAuth')
-    }
+    sessionStorage.setItem('adminAuth', 'true')
 
     router.push('/product')
   }
