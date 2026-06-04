@@ -5,7 +5,6 @@ import { useState } from 'react'
 import SPGLogo from '@/components/SPGLogo'
 import AdminExportButton from '@/components/AdminExportButton'
 import HelpIcon from '@/components/HelpIcon'
-import AnimatedBackground from '@/components/AnimatedBackground'
 import { useLanguage } from '@/lib/languageContext'
 
 const ADMIN_CODE = 'admin'
@@ -37,7 +36,6 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 relative">
-      <AnimatedBackground />
       <AdminExportButton />
       <HelpIcon />
       <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 py-10 border border-gray-200">

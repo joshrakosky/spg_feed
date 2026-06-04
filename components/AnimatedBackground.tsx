@@ -1,7 +1,7 @@
 'use client'
 
 /**
- * AnimatedBackground — gray SPG emblems bouncing across the login screen.
+ * AnimatedBackground — gray SPG emblems bouncing behind all pages.
  * Motion uses translation only (no rotation) so emblems stay upright.
  */
 const EMBLEM_SRC = '/images/spg-emblem-black.png'

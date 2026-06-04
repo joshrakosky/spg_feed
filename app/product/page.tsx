@@ -94,7 +94,7 @@ export default function ProductPage() {
     <>
       <AdminExportButton />
       <HelpIcon />
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-12 px-4">
+      <div className="min-h-screen py-12 px-4 relative">
         <div className="max-w-5xl mx-auto">
           <div className="mb-6 text-center">
             <h1 className="text-3xl font-bold text-black mb-2">{t('selectProduct')}</h1>

@@ -89,7 +89,7 @@ export default function ShippingPage() {
     <>
       <AdminExportButton />
       <HelpIcon />
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-12 px-4">
+      <div className="min-h-screen py-12 px-4 relative">
         <div className="max-w-2xl mx-auto">
           <div className="mb-4 text-center">
             <MealsCounter variant="compact" />

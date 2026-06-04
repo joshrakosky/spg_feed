@@ -127,7 +127,7 @@ export default function AdminPage() {
 
   if (!authenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 relative">
+      <div className="min-h-screen flex items-center justify-center px-4 relative">
         <HelpIcon />
         <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 border border-gray-200">
           <h1 className="text-2xl font-bold text-gray-900 mb-6">SPG FEED Admin</h1>
@@ -159,7 +159,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 relative">
+    <div className="min-h-screen py-8 px-4 relative">
       <HelpIcon />
       <div className="max-w-7xl mx-auto">
         <div className="bg-white rounded-lg shadow-lg p-8 border border-gray-200">

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/languageContext";
+import AppBackground from "@/components/AppBackground";
 
 export const metadata: Metadata = {
   title: "SPG FEED",
@@ -18,8 +19,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased bg-gray-50">
+      <body className="antialiased">
         <LanguageProvider>
+          <AppBackground />
           {children}
         </LanguageProvider>
       </body>

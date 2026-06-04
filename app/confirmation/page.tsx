@@ -27,7 +27,7 @@ export default function ConfirmationPage() {
     <>
       <AdminExportButton />
       <HelpIcon />
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center px-4">
+      <div className="min-h-screen flex items-center justify-center px-4 relative">
         <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center border border-gray-200">
           <div className="mb-6">
             <div className="text-6xl mb-4">✅</div>
