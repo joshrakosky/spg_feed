@@ -3,8 +3,8 @@ import "./globals.css";
 import { LanguageProvider } from "@/lib/languageContext";
 
 export const metadata: Metadata = {
-  title: "VB Spine",
-  description: "Product selection for VB Spine",
+  title: "SPG FEED",
+  description: "Simon Property Group FEED program — every purchase helps provide school meals for children worldwide.",
 };
 
 export default function RootLayout({

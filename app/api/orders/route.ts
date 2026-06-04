@@ -1,41 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
-import { FIXED_SHIPPING_ADDRESS } from '@/lib/shippingConfig'
-import { getEnglishSize } from '@/lib/sizeUtils'
-import { getStockRules, isOutOfStock } from '@/lib/stockConfig'
+import { SelectedProduct } from '@/types'
 
-// Generate unique order number in format CES-001, CES-002, etc.
+// Generate unique order number in format FEED-001, FEED-002, etc.
 async function generateOrderNumber(): Promise<string> {
-  // Get the highest existing order number
   const { data: orders, error } = await supabase
-    .from('cestes_orders')
+    .from('spg_feed_orders')
     .select('order_number')
     .order('created_at', { ascending: false })
     .limit(1)
 
   if (error) {
     console.error('Error fetching orders:', error)
-    // Fallback: start from 1 if there's an error
-    return 'CES-001'
+    return 'FEED-001'
   }
 
   if (!orders || orders.length === 0) {
-    // First order
-    return 'CES-001'
+    return 'FEED-001'
   }
 
-  // Extract number from existing order (e.g., "CES-001" -> 1)
   const lastOrderNumber = orders[0].order_number
-  const match = lastOrderNumber.match(/CES-(\d+)/i)
-  
+  const match = lastOrderNumber.match(/FEED-(\d+)/i)
+
   if (match) {
     const lastNumber = parseInt(match[1], 10)
     const nextNumber = lastNumber + 1
-    return `CES-${String(nextNumber).padStart(3, '0')}`
+    return `FEED-${String(nextNumber).padStart(3, '0')}`
   }
 
-  // If format doesn't match, start from 1
-  return 'CES-001'
+  return 'FEED-001'
 }
 
 export async function POST(request: NextRequest) {
@@ -43,7 +36,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { email, shipping, product } = body
 
-    // Validate required fields
     if (!email || !shipping || !product) {
       return NextResponse.json(
         { error: 'Missing required fields' },
@@ -51,127 +43,75 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Handle cart (array of products) or single product
-    const cartItems = Array.isArray(product) ? product : [product]
+    const selectedProduct = product as SelectedProduct
 
-    // Multiple orders per email allowed for testing. Run migrations/supabase-migration-allow-multiple-orders.sql in Supabase to drop UNIQUE(email) constraint.
+    if (!selectedProduct.productId) {
+      return NextResponse.json(
+        { error: 'Invalid product selection' },
+        { status: 400 }
+      )
+    }
 
-    // Generate order number
     const orderNumber = await generateOrderNumber()
 
-    // Create order: shipping_name = customer full name (for export); address uses fixed destination
     const { data: order, error: orderError } = await supabase
-      .from('cestes_orders')
+      .from('spg_feed_orders')
       .insert({
         email: email.toLowerCase(),
         order_number: orderNumber,
-        shipping_name: shipping?.name || FIXED_SHIPPING_ADDRESS.name,
-        shipping_phone: shipping?.phone || null,
-        shipping_address: FIXED_SHIPPING_ADDRESS.address,
-        shipping_address2: FIXED_SHIPPING_ADDRESS.address2 || null,
-        shipping_city: FIXED_SHIPPING_ADDRESS.city,
-        shipping_state: FIXED_SHIPPING_ADDRESS.state,
-        shipping_zip: FIXED_SHIPPING_ADDRESS.zip,
-        shipping_country: FIXED_SHIPPING_ADDRESS.country
+        shipping_name: shipping.name,
+        shipping_phone: shipping.phone || null,
+        shipping_address: shipping.address,
+        shipping_address2: shipping.address2 || null,
+        shipping_city: shipping.city,
+        shipping_state: shipping.state,
+        shipping_zip: shipping.zip,
+        shipping_country: shipping.country || 'USA',
       })
       .select()
       .single()
 
     if (orderError) throw orderError
 
-    // Process all cart items
-    const orderItems: any[] = []
-    
-    for (const cartItem of cartItems) {
-      // Get product details (include vendor_item_num for stock validation)
-      const { data: productData } = await supabase
-        .from('cestes_products')
-        .select('name, customer_item_number, vendor_item_num')
-        .eq('id', cartItem.productId)
-        .single()
+    const { data: productData, error: productError } = await supabase
+      .from('spg_feed_products')
+      .select('name, customer_item_number, school_meals_per_purchase')
+      .eq('id', selectedProduct.productId)
+      .single()
 
-      // Stock validation - reject OOS items (defense in depth)
-      const stockRules = getStockRules(
-        productData?.vendor_item_num as string | undefined,
-        productData?.customer_item_number
+    if (productError || !productData) {
+      return NextResponse.json(
+        { error: 'Product not found' },
+        { status: 400 }
       )
-      if (stockRules && cartItem.color && cartItem.size) {
-        if (isOutOfStock(stockRules, cartItem.color, cartItem.size)) {
-          return NextResponse.json(
-            { error: `The selected ${cartItem.productName || 'item'} (${cartItem.color} / ${cartItem.size}) is out of stock and cannot be ordered.` },
-            { status: 400 }
-          )
-        }
-      }
-
-      // Handle YETI Kit specially - creates 3 items (one for each size) with individual colors
-      const isYetiKit = cartItem.isYetiKit || productData?.name === 'YETI Kit'
-      
-      if (isYetiKit && cartItem.yeti8ozColor && cartItem.yeti26ozColor && cartItem.yeti35ozColor) {
-        // Create 3 order items for YETI Kit
-        const yetiItems = [
-          {
-            size: '8oz',
-            name: 'YETI Rambler 8oz Stackable Cup',
-            color: cartItem.yeti8ozColor
-          },
-          {
-            size: '26oz',
-            name: 'YETI Rambler 26oz Straw Bottle',
-            color: cartItem.yeti26ozColor
-          },
-          {
-            size: '35oz',
-            name: 'YETI Rambler 35oz Tumbler with Straw Lid',
-            color: cartItem.yeti35ozColor
-          }
-        ]
-        
-        yetiItems.forEach(item => {
-          orderItems.push({
-            order_id: order.id,
-            product_id: cartItem.productId,
-            product_name: item.name,
-            customer_item_number: productData?.customer_item_number || null,
-            color: item.color,
-            size: getEnglishSize(item.size) ?? item.size
-          })
-        })
-      } else {
-        // Regular product - create one order_item per quantity
-        const qty = cartItem.quantity ?? 1
-        for (let i = 0; i < qty; i++) {
-          orderItems.push({
-            order_id: order.id,
-            product_id: cartItem.productId,
-            product_name: cartItem.productName || productData?.name || 'Unknown Product',
-            customer_item_number: productData?.customer_item_number || null,
-            color: cartItem.color || null,
-            size: getEnglishSize(cartItem.size) ?? cartItem.size ?? null,
-            logo_color: cartItem.logo_color || null
-          })
-        }
-      }
     }
 
+    const schoolMeals =
+      productData.school_meals_per_purchase ??
+      selectedProduct.school_meals_per_purchase ??
+      0
+
     const { error: itemsError } = await supabase
-      .from('cestes_order_items')
-      .insert(orderItems)
+      .from('spg_feed_order_items')
+      .insert({
+        order_id: order.id,
+        product_id: selectedProduct.productId,
+        product_name: selectedProduct.productName || productData.name,
+        customer_item_number: productData.customer_item_number || selectedProduct.customer_item_number,
+        school_meals: schoolMeals,
+      })
 
     if (itemsError) throw itemsError
 
     return NextResponse.json({
       success: true,
       order_number: orderNumber,
-      order_id: order.id
+      order_id: order.id,
+      school_meals: schoolMeals,
     })
-
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Order creation error:', error)
-    return NextResponse.json(
-      { error: error.message || 'Failed to create order' },
-      { status: 500 }
-    )
+    const message = error instanceof Error ? error.message : 'Failed to create order'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
-

@@ -2,34 +2,25 @@
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import VBSLogo from '@/components/VBSLogo'
+import SPGLogo from '@/components/SPGLogo'
 import AdminExportButton from '@/components/AdminExportButton'
 import HelpIcon from '@/components/HelpIcon'
 import AnimatedBackground from '@/components/AnimatedBackground'
 import { useLanguage } from '@/lib/languageContext'
 
-// Former public access code — no longer valid; show store-closed message if entered
-const LEGACY_PUBLIC_ACCESS_CODE = 'CestasSpine*2026!'
-// Admin-only entry; grants catalog access and export UI
 const ADMIN_CODE = 'admin'
 
 export default function LandingPage() {
   const router = useRouter()
-  const { language, setLanguage, t } = useLanguage()
+  const { t } = useLanguage()
   const [code, setCode] = useState('')
   const [error, setError] = useState('')
 
   const handleStart = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!code.trim()) {
       setError(t('accessCodeRequired'))
-      return
-    }
-
-    // Retired public code: tell visitors ordering ended
-    if (code === LEGACY_PUBLIC_ACCESS_CODE) {
-      setError(t('storeClosedMay5'))
       return
     }
 
@@ -38,11 +29,10 @@ export default function LandingPage() {
       return
     }
 
-    // Admin entry — email is collected at checkout
     sessionStorage.setItem('accessGranted', 'true')
     sessionStorage.setItem('adminAuth', 'true')
 
-    router.push('/product')
+    router.push('/program')
   }
 
   return (
@@ -50,34 +40,12 @@ export default function LandingPage() {
       <AnimatedBackground />
       <AdminExportButton />
       <HelpIcon />
-      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 py-10">
+      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 py-10 border border-gray-200">
         <div className="text-center mb-6">
           <div className="mb-6 flex justify-center">
-            <VBSLogo className="text-xl" />
+            <SPGLogo className="text-xl" />
           </div>
-          
-          {/* Language Toggle */}
-          <div className="mb-4 flex justify-center items-center gap-3">
-            <span className={`text-sm font-medium ${language === 'en' ? 'text-gray-900' : 'text-gray-400'}`}>EN</span>
-            <button
-              type="button"
-              onClick={() => setLanguage(language === 'en' ? 'fr' : 'en')}
-              className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#663399] focus:ring-offset-2"
-              style={{ backgroundColor: language === 'en' ? '#663399' : '#D9C2FF' }}
-              aria-label="Toggle language"
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  language === 'en' ? 'translate-x-1' : 'translate-x-6'
-                }`}
-              />
-            </button>
-            <span className={`text-sm font-medium ${language === 'fr' ? 'text-gray-900' : 'text-gray-400'}`}>FR</span>
-          </div>
-
-          <p className="text-gray-600">
-            {t('enterAccessCode')}
-          </p>
+          <p className="text-gray-600">{t('enterAccessCode')}</p>
         </div>
 
         <form onSubmit={handleStart} className="space-y-6">
@@ -93,19 +61,16 @@ export default function LandingPage() {
                 setCode(e.target.value)
                 setError('')
               }}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#663399] focus:border-transparent text-black bg-white"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-transparent text-black bg-white"
               placeholder={t('accessCodePlaceholder')}
               required
             />
-            {error && (
-              <p className="mt-2 text-sm text-red-600">{error}</p>
-            )}
+            {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
           </div>
 
           <button
             type="submit"
-            className="w-full text-white py-3 px-4 rounded-md hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#663399] focus:ring-offset-2 transition-colors font-medium"
-            style={{ backgroundColor: '#663399' }}
+            className="w-full btn-spg py-3 px-4 rounded-md transition-colors font-medium"
           >
             {t('startShopping')}
           </button>

@@ -1,57 +1,42 @@
-# VB Spine (CESTES) Ecommerce Site
+# SPG FEED Program Store
 
-A simplified ecommerce site for VB Spine product selection. Users enter a whitelisted email address to access the site, select a product, provide shipping information, and receive an order confirmation.
+Simon Property Group FEED program storefront. Each tote purchase helps provide school meals for children worldwide. Built with Next.js and Supabase.
 
 ## Features
 
-- **Email Whitelist Access**: Only whitelisted email addresses can access the site
-- **Single Product Selection**: One product selection page with color/size options
-- **Email Collection**: Email collected during landing for access control and order tracking
-- **One Order Per Email**: Database-enforced limit of one order per email address
-- **Fixed Shipping Address**: All orders ship to a single configured address
-- **Admin Dashboard**: View and export orders to Excel
+- **Admin code access** — enter `admin` on the landing page
+- **Program overview** — mission copy and live school-meals counter
+- **6-product grid** — select one FEED tote with meals impact shown per product
+- **Editable shipping** — users enter their own full shipping address
+- **Order tracking** — `FEED-###` order numbers and confirmation flow
+- **Admin export** — Excel export of orders with school meals data
 
 ## Quick Start
 
-### 1. Install Dependencies
+### 1. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 2. Set Up Supabase
+### 2. Set up Supabase
 
-1. Create a new Supabase project at [supabase.com](https://supabase.com)
-2. Run the SQL schema from [`migrations/supabase-schema-cestes.sql`](migrations/supabase-schema-cestes.sql) in your Supabase SQL Editor
-3. Add your Supabase credentials to `.env.local`:
+1. Create a Supabase project at [supabase.com](https://supabase.com)
+2. Run [`migrations/supabase-schema-spg-feed.sql`](migrations/supabase-schema-spg-feed.sql) in the Supabase SQL Editor
+3. Add credentials to `.env.local`:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `NEXT_PUBLIC_ADMIN_PASSWORD` (optional, defaults to 'vbspine2024')
+   - `NEXT_PUBLIC_ADMIN_PASSWORD` (optional, defaults to `admin` for `/admin` page)
 
-### 3. Configure Fixed Shipping Address
+### 3. Product images
 
-Update `lib/shippingConfig.ts` with the actual shipping address where all orders will be sent.
+Images are in `public/images/`:
 
-### 4. Add Products
+- `FEED_Item1.jpg` … `FEED_Item6.jpg` — product thumbnails
+- `simon-logo.jpg` — Simon Property Group logo
+- `spg-emblem-black.png`, `spg-emblem-white.png` — animated login background
 
-Add your products to the `cestes_products` table via Supabase dashboard or SQL. See `VBS_CESTES_SETUP.md` for detailed product schema.
-
-### 5. Add Product Images
-
-Add product images to `public/images/` following the naming convention:
-- Format: `VBS_{item#}_{color}.jpg`
-- Example: `VBS_NKFQ4762_Black.jpg`
-
-### 6. Add Logo
-
-Add the VB Spine logo to `public/images/vbs-logo.png` (or .jpg, .svg, .webp)
-
-### 7. Configure Email Whitelist
-
-Edit `app/page.tsx` and add emails to the `ALLOWED_EMAILS` array. Default includes:
-- `josh.rakosky@proforma.com`
-
-### 8. Run Development Server
+### 4. Run development server
 
 ```bash
 npm run dev
@@ -59,60 +44,24 @@ npm run dev
 
 Visit [http://localhost:3000](http://localhost:3000)
 
-## Site Access
+## User flow
 
-**Email Whitelist**: Only whitelisted email addresses can access the site.
+1. `/` — enter admin code
+2. `/program` — program info, meals counter, **Select Product**
+3. `/product` — 3×3 tote grid, pick one, **Continue to Shipping**
+4. `/shipping` — contact + address form
+5. `/review` — confirm and submit
+6. `/confirmation` — `FEED-###` order number
 
-Default whitelisted email:
-- `josh.rakosky@proforma.com`
+## Database tables
 
-To add more emails, edit `app/page.tsx` and add emails to the `ALLOWED_EMAILS` array.
+| Table | Purpose |
+|-------|---------|
+| `spg_feed_products` | 6 FEED totes with `school_meals_per_purchase` |
+| `spg_feed_orders` | Order headers and shipping |
+| `spg_feed_order_items` | Line items with `school_meals` snapshot |
 
-## Order Flow
+## Admin
 
-1. **Landing Page** (`/`): User enters whitelisted email address
-2. **Product Selection** (`/product`): User selects one product with options
-3. **Shipping** (`/shipping`): User enters shipping information (collected for records, but all orders ship to fixed address)
-4. **Review** (`/review`): User reviews order before submission
-5. **Confirmation** (`/confirmation`): Order confirmation with order number
-
-## Order Number Format
-
-Orders are numbered as: `CES-001`, `CES-002`, etc.
-
-## Fixed Shipping Address
-
-All orders ship to a single fixed address configured in `lib/shippingConfig.ts`. The shipping form still collects user shipping information for records, but the backend uses the fixed address for all orders.
-
-## Admin Access
-
-Visit `/admin` to:
-- View all orders
-- Export orders to Excel (two sheets: Detailed Orders and Distribution Summary)
-
-Admin access is granted to `josh.rakosky@proforma.com` by default.
-
-## Database Schema
-
-- **cestes_products**: Product catalog
-- **cestes_orders**: Order information (with email uniqueness constraint)
-- **cestes_order_items**: Individual items in each order
-
-See [`migrations/supabase-schema-cestes.sql`](migrations/supabase-schema-cestes.sql) for the complete schema.
-
-## Color Scheme
-
-VB Purple (#663399) is used throughout the application for buttons, focus rings, and accent colors.
-
-## Documentation
-
-- `VBS_CESTES_SETUP.md` - Detailed setup guide
-
-## Deployment
-
-Deploy to Vercel:
-
-1. Push your code to GitHub
-2. Import project in Vercel
-3. Add environment variables in Vercel dashboard
-4. Deploy
+- **Floating export** — appears after logging in with `admin` on the landing page
+- **`/admin`** — order list dashboard (password: `admin` or `NEXT_PUBLIC_ADMIN_PASSWORD`)

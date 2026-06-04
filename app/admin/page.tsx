@@ -13,8 +13,7 @@ export default function AdminPage() {
   const [authenticated, setAuthenticated] = useState(false)
   const [error, setError] = useState('')
 
-  // Simple password protection (you can enhance this later)
-  const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'vbspine2024'
+  const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'admin'
 
   useEffect(() => {
     if (authenticated) {
@@ -35,162 +34,103 @@ export default function AdminPage() {
   const loadOrders = async () => {
     try {
       setLoading(true)
-      
-      // Fetch orders with their items
+
       const { data: ordersData, error: ordersError } = await supabase
-        .from('cestes_orders')
+        .from('spg_feed_orders')
         .select('*')
         .order('created_at', { ascending: false })
 
       if (ordersError) throw ordersError
 
-      // Fetch order items for each order
       const ordersWithItems = await Promise.all(
         (ordersData || []).map(async (order) => {
           const { data: items, error: itemsError } = await supabase
-            .from('cestes_order_items')
+            .from('spg_feed_order_items')
             .select('*')
             .eq('order_id', order.id)
             .order('created_at')
 
           if (itemsError) throw itemsError
 
-          return {
-            ...order,
-            items: items || []
-          }
+          return { ...order, items: items || [] }
         })
       )
 
       setOrders(ordersWithItems)
-    } catch (err: any) {
-      setError(err.message || 'Failed to load orders')
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to load orders'
+      setError(message)
     } finally {
       setLoading(false)
     }
   }
 
   const exportToExcel = async () => {
-    // Fetch all products with fulfillment columns for export
-    const { data: productsData, error: productsError } = await supabase
-      .from('cestes_products')
-      .select('id, vendor_ref, vendor_item_num, unit_cost, unit_sell, logo, logo_colors_available, logo_location')
+    const detailedData = orders.flatMap((order) =>
+      order.items.map((item) => ({
+        'Order Number': order.order_number,
+        Email: order.email,
+        'Full Name': order.shipping_name,
+        Phone: order.shipping_phone ?? '',
+        'Product Name': item.product_name,
+        'Customer Item #': item.customer_item_number || '',
+        'School Meals': item.school_meals,
+        'Shipping Address': order.shipping_address,
+        City: order.shipping_city,
+        State: order.shipping_state,
+        ZIP: order.shipping_zip,
+        Country: order.shipping_country,
+        'Order Date': new Date(order.created_at).toLocaleDateString(),
+      }))
+    )
 
-    if (productsError) {
-      alert('Failed to load product information. Please try again.')
-      return
-    }
-
-    const productMap = new Map<string, Record<string, unknown>>()
-    productsData?.forEach(product => {
-      productMap.set(product.id, product as Record<string, unknown>)
-    })
-
-    // Sheet 1: Detailed Orders (one row per item)
-    const detailedData = orders.flatMap(order => {
-      return order.items.map((item) => {
-        const product = item.product_id ? productMap.get(item.product_id) : undefined
-        const itemWithLogo = item as { logo_color?: string }
-        return {
-          'Order Number': order.order_number,
-          'Email': order.email,
-          'Full Name': order.shipping_name,
-          'Phone': order.shipping_phone ?? '',
-          'Product Name': item.product_name,
-          'Customer Item #': item.customer_item_number || '',
-          'Vendor Ref': product?.vendor_ref ?? '',
-          'Vendor Item #': product?.vendor_item_num ?? '',
-          'Unit Cost': product?.unit_cost ?? '',
-          'Unit Sell': product?.unit_sell ?? '',
-          'Color': item.color || '',
-          'Size': item.size || '',
-          'Logo': product?.logo ?? '',
-          'Logo Color': itemWithLogo.logo_color ?? '',
-          'Logo Location': product?.logo_location ?? '',
-          'Order Date': new Date(order.created_at).toLocaleDateString()
-        }
-      })
-    })
-
-    // Sheet 2: Distribution Summary (grouped by product/color/size/logo color)
-    type SummaryEntry = { quantity: number; product: Record<string, unknown> | undefined }
+    type SummaryEntry = { quantity: number; schoolMeals: number }
     const summaryMap = new Map<string, SummaryEntry>()
-    
-    orders.forEach(order => {
-      order.items.forEach(item => {
-        const itemWithLogo = item as { logo_color?: string }
-        const key = [
-          item.product_name,
-          item.customer_item_number || '',
-          item.color || 'N/A',
-          item.size || 'N/A',
-          itemWithLogo.logo_color || 'N/A'
-        ].join('|')
-        
-        const product = item.product_id ? productMap.get(item.product_id) : undefined
+
+    orders.forEach((order) => {
+      order.items.forEach((item) => {
+        const key = [item.product_name, item.customer_item_number || ''].join('|')
         const existing = summaryMap.get(key)
         if (existing) {
-          summaryMap.set(key, { quantity: existing.quantity + 1, product: existing.product })
+          summaryMap.set(key, {
+            quantity: existing.quantity + 1,
+            schoolMeals: existing.schoolMeals + item.school_meals,
+          })
         } else {
-          summaryMap.set(key, { quantity: 1, product })
+          summaryMap.set(key, { quantity: 1, schoolMeals: item.school_meals })
         }
       })
     })
 
     const summaryData = Array.from(summaryMap.entries()).map(([key, data]) => {
-      const [productName, customerItem, color, size, logoColor] = key.split('|')
-      const product = data.product
+      const [productName, customerItem] = key.split('|')
       return {
         'Product Name': productName,
         'Customer Item #': customerItem,
-        'Vendor Ref': product?.vendor_ref ?? '',
-        'Vendor Item #': product?.vendor_item_num ?? '',
-        'Unit Cost': product?.unit_cost ?? '',
-        'Unit Sell': product?.unit_sell ?? '',
-        'Color': color,
-        'Size': size,
-        'Logo': product?.logo ?? '',
-        'Logo Color': logoColor !== 'N/A' ? logoColor : '',
-        'Logo Location': product?.logo_location ?? '',
-        'Quantity': data.quantity
+        Quantity: data.quantity,
+        'Total School Meals': data.schoolMeals,
       }
-    }).sort((a, b) => {
-      if (a['Product Name'] !== b['Product Name']) {
-        return (a['Product Name'] as string).localeCompare(b['Product Name'] as string)
-      }
-      if (a['Color'] !== b['Color']) {
-        return (a['Color'] as string).localeCompare(b['Color'] as string)
-      }
-      if (a['Size'] !== b['Size']) {
-        return (a['Size'] as string).localeCompare(b['Size'] as string)
-      }
-      return (a['Logo Color'] as string).localeCompare(b['Logo Color'] as string)
     })
 
-    // Create workbook with two sheets
     const wb = XLSX.utils.book_new()
-    
-    // Detailed Orders sheet
-    const wsDetailed = XLSX.utils.json_to_sheet(detailedData)
-    XLSX.utils.book_append_sheet(wb, wsDetailed, 'Detailed Orders')
-    
-    // Distribution Summary sheet
-    const wsSummary = XLSX.utils.json_to_sheet(summaryData)
-    XLSX.utils.book_append_sheet(wb, wsSummary, 'Distribution Summary')
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(detailedData), 'Detailed Orders')
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(summaryData), 'Distribution Summary')
 
-    // Generate filename with current date
-    const filename = `cestes-orders-${new Date().toISOString().split('T')[0]}.xlsx`
-
-    // Write file
+    const filename = `spg-feed-orders-${new Date().toISOString().split('T')[0]}.xlsx`
     XLSX.writeFile(wb, filename)
   }
+
+  const totalMeals = orders.reduce(
+    (sum, order) => sum + order.items.reduce((s, item) => s + item.school_meals, 0),
+    0
+  )
 
   if (!authenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 relative">
         <HelpIcon />
-        <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">Admin Access</h1>
+        <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 border border-gray-200">
+          <h1 className="text-2xl font-bold text-gray-900 mb-6">SPG FEED Admin</h1>
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
@@ -204,18 +144,12 @@ export default function AdminPage() {
                   setPassword(e.target.value)
                   setError('')
                 }}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#663399] focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-transparent"
                 required
               />
-              {error && (
-                <p className="mt-2 text-sm text-red-600">{error}</p>
-              )}
+              {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
             </div>
-            <button
-              type="submit"
-              className="w-full text-white py-2 px-4 rounded-md hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#663399] focus:ring-offset-2"
-              style={{ backgroundColor: '#663399' }}
-            >
+            <button type="submit" className="w-full btn-spg py-2 px-4 rounded-md">
               Login
             </button>
           </form>
@@ -228,11 +162,13 @@ export default function AdminPage() {
     <div className="min-h-screen bg-gray-50 py-8 px-4 relative">
       <HelpIcon />
       <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg p-8">
+        <div className="bg-white rounded-lg shadow-lg p-8 border border-gray-200">
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">VB Spine Order Management</h1>
-              <p className="text-gray-600 mt-1">Total Orders: {orders.length}</p>
+              <h1 className="text-3xl font-bold text-gray-900">SPG FEED Order Management</h1>
+              <p className="text-gray-600 mt-1">
+                Total Orders: {orders.length} · School Meals: {totalMeals.toLocaleString('en-US')}
+              </p>
             </div>
             <div className="flex gap-4">
               <button
@@ -245,7 +181,6 @@ export default function AdminPage() {
                 onClick={exportToExcel}
                 disabled={orders.length === 0}
                 className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                title="Exports two sheets: Detailed Orders and Distribution Summary"
               >
                 Export to Excel
               </button>
@@ -265,19 +200,19 @@ export default function AdminPage() {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Order #
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Email
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Products
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                      Product / Meals
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Shipping Address
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                       Date
                     </th>
                   </tr>
@@ -292,26 +227,30 @@ export default function AdminPage() {
                         {order.email}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-500">
-                        <div className="space-y-1">
-                          {order.items.map((item, idx) => (
-                            <div key={idx}>
-                              {item.product_name}
-                              {item.customer_item_number && ` [${item.customer_item_number}]`}
-                              {item.color && ` - ${item.color}`}
-                              {item.size && ` (${item.size})`}
-                              {(item as { logo_color?: string }).logo_color && ` Logo: ${(item as { logo_color?: string }).logo_color}`}
-                            </div>
-                          ))}
-                        </div>
+                        {order.items.map((item, idx) => (
+                          <div key={idx}>
+                            {item.product_name}
+                            {item.customer_item_number && ` [${item.customer_item_number}]`}
+                            {' — '}
+                            {item.school_meals} meals
+                          </div>
+                        ))}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-500">
                         <div>
-                          {order.shipping_name}<br />
-                          {order.shipping_phone && <>{order.shipping_phone}<br /></>}
-                          {order.shipping_address}<br />
-                          {order.shipping_city}<br />
-                          {order.shipping_country}<br />
-                          {order.shipping_zip}
+                          {order.shipping_name}
+                          <br />
+                          {order.shipping_phone && (
+                            <>
+                              {order.shipping_phone}
+                              <br />
+                            </>
+                          )}
+                          {order.shipping_address}
+                          <br />
+                          {order.shipping_city}, {order.shipping_state} {order.shipping_zip}
+                          <br />
+                          {order.shipping_country}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -328,4 +267,3 @@ export default function AdminPage() {
     </div>
   )
 }
-
