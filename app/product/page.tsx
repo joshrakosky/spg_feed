@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { supabase, getSupabaseErrorMessage, isSupabaseConfigured } from '@/lib/supabase'
 import { Product } from '@/types'
 import AdminExportButton from '@/components/AdminExportButton'
 import HelpIcon from '@/components/HelpIcon'
@@ -38,6 +38,12 @@ export default function ProductPage() {
   }, [router])
 
   const loadProducts = async () => {
+    if (!isSupabaseConfigured) {
+      setError('Store is not connected to the database. Please contact support.')
+      setLoading(false)
+      return
+    }
+
     try {
       const { data, error: fetchError } = await supabase
         .from('spg_feed_products')
@@ -47,8 +53,9 @@ export default function ProductPage() {
       if (fetchError) throw fetchError
       setProducts(data ?? [])
     } catch (e) {
-      console.error(e)
-      setError('Failed to load products. Please try again.')
+      setError(
+        `Failed to load products. ${getSupabaseErrorMessage(e)}`.trim()
+      )
     } finally {
       setLoading(false)
     }

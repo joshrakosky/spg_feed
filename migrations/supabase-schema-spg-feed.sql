@@ -51,7 +51,13 @@ ALTER TABLE spg_feed_products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE spg_feed_orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE spg_feed_order_items ENABLE ROW LEVEL SECURITY;
 
--- Policies: public read products, insert/select orders
+-- Policies (drop first so this script is safe to re-run)
+DROP POLICY IF EXISTS "spg_feed_products are viewable by everyone" ON spg_feed_products;
+DROP POLICY IF EXISTS "spg_feed_orders are insertable" ON spg_feed_orders;
+DROP POLICY IF EXISTS "spg_feed_orders are viewable by everyone" ON spg_feed_orders;
+DROP POLICY IF EXISTS "spg_feed_order_items are insertable" ON spg_feed_order_items;
+DROP POLICY IF EXISTS "spg_feed_order_items are viewable by everyone" ON spg_feed_order_items;
+
 CREATE POLICY "spg_feed_products are viewable by everyone"
   ON spg_feed_products FOR SELECT
   USING (true);

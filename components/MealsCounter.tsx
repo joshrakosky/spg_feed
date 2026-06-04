@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { fetchProgramMealsTotal } from '@/lib/mealsTotal'
 
 interface MealsCounterProps {
   /** Compact layout for headers on checkout pages */
@@ -19,31 +19,16 @@ export default function MealsCounter({ variant = 'hero', className = '' }: Meals
   useEffect(() => {
     let cancelled = false
 
-    async function loadTotal() {
-      const { data, error } = await supabase
-        .from('spg_feed_order_items')
-        .select('school_meals')
+    fetchProgramMealsTotal().then((total) => {
+      if (!cancelled) setTotalMeals(total)
+    })
 
-      if (cancelled) return
-
-      if (error) {
-        console.error('Failed to load meals total:', error)
-        setTotalMeals(0)
-        return
-      }
-
-      const sum = (data ?? []).reduce((acc, row) => acc + (row.school_meals ?? 0), 0)
-      setTotalMeals(sum)
-    }
-
-    loadTotal()
     return () => {
       cancelled = true
     }
   }, [])
 
-  const formatted =
-    totalMeals === null ? '—' : totalMeals.toLocaleString('en-US')
+  const formatted = totalMeals === null ? '—' : totalMeals.toLocaleString('en-US')
 
   if (variant === 'compact') {
     return (

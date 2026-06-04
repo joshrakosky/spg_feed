@@ -7,6 +7,7 @@ import HelpIcon from '@/components/HelpIcon'
 import MealsCounter from '@/components/MealsCounter'
 import { useLanguage } from '@/lib/languageContext'
 import { SelectedProduct } from '@/types'
+import { invalidateProgramMealsTotal } from '@/lib/mealsTotal'
 
 export default function ReviewPage() {
   const router = useRouter()
@@ -64,6 +65,8 @@ export default function ReviewPage() {
 
       sessionStorage.setItem('orderNumber', orderData.order_number)
       sessionStorage.setItem('orderMeals', String(orderData.school_meals ?? product?.school_meals_per_purchase ?? 0))
+
+      invalidateProgramMealsTotal()
 
       sessionStorage.removeItem('product')
       sessionStorage.removeItem('shipping')

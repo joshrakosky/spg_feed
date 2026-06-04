@@ -43,11 +43,21 @@ export default function ProgramPage() {
 
           <MealsCounter className="mb-8" />
 
-          <div className="text-center">
+          <div className="flex justify-between items-center">
+            <button
+              type="button"
+              onClick={() => {
+                sessionStorage.clear()
+                router.push('/')
+              }}
+              className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+            >
+              {t('backToLogin')}
+            </button>
             <button
               type="button"
               onClick={() => router.push('/product')}
-              className="btn-spg px-8 py-3 rounded-md font-medium text-lg"
+              className="btn-spg px-6 py-2 rounded-md font-medium"
             >
               {t('selectProductButton')}
             </button>

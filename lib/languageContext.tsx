@@ -69,6 +69,7 @@ const translations: Record<string, string> = {
     "The meals your FEED purchases help provide are more than just calories; they're a chance at a better future.",
   selectProductButton: 'Select Product →',
   backToProgram: '← Back to Program',
+  backToLogin: '← Back',
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {

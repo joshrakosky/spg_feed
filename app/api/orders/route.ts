@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { isSupabaseConfigured, supabase } from '@/lib/supabase'
 import { SelectedProduct } from '@/types'
 
 // Generate unique order number in format FEED-001, FEED-002, etc.
@@ -33,6 +33,13 @@ async function generateOrderNumber(): Promise<string> {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!isSupabaseConfigured) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 503 }
+      )
+    }
+
     const body = await request.json()
     const { email, shipping, product } = body
 
