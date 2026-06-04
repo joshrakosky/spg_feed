@@ -1,4 +1,4 @@
-import { getSupabaseErrorMessage, isSupabaseConfigured, supabase } from '@/lib/supabase'
+import { getSupabaseClient, getSupabaseErrorMessage, isSupabaseConfigured } from '@/lib/supabase'
 
 let cachedTotal: number | null = null
 let inflight: Promise<number> | null = null
@@ -17,7 +17,7 @@ export async function fetchProgramMealsTotal(): Promise<number> {
   }
 
   inflight = (async () => {
-    const { data, error } = await supabase
+    const { data, error } = await getSupabaseClient()
       .from('spg_feed_order_items')
       .select('school_meals')
 

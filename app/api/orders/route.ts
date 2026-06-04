@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { isSupabaseConfigured, supabase } from '@/lib/supabase'
+import { getSupabaseClient, isSupabaseConfigured } from '@/lib/supabase'
 import { SelectedProduct } from '@/types'
 
 // Generate unique order number in format FEED-001, FEED-002, etc.
 async function generateOrderNumber(): Promise<string> {
-  const { data: orders, error } = await supabase
+  const { data: orders, error } = await getSupabaseClient()
     .from('spg_feed_orders')
     .select('order_number')
     .order('created_at', { ascending: false })
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
 
     const orderNumber = await generateOrderNumber()
 
-    const { data: order, error: orderError } = await supabase
+    const { data: order, error: orderError } = await getSupabaseClient()
       .from('spg_feed_orders')
       .insert({
         email: email.toLowerCase(),
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
 
     if (orderError) throw orderError
 
-    const { data: productData, error: productError } = await supabase
+    const { data: productData, error: productError } = await getSupabaseClient()
       .from('spg_feed_products')
       .select('name, customer_item_number, school_meals_per_purchase')
       .eq('id', selectedProduct.productId)
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
       selectedProduct.school_meals_per_purchase ??
       0
 
-    const { error: itemsError } = await supabase
+    const { error: itemsError } = await getSupabaseClient()
       .from('spg_feed_order_items')
       .insert({
         order_id: order.id,

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { getSupabaseClient } from '@/lib/supabase'
 import * as XLSX from 'xlsx'
 import { OrderWithItems } from '@/types'
 import HelpIcon from '@/components/HelpIcon'
@@ -35,7 +35,7 @@ export default function AdminPage() {
     try {
       setLoading(true)
 
-      const { data: ordersData, error: ordersError } = await supabase
+      const { data: ordersData, error: ordersError } = await getSupabaseClient()
         .from('spg_feed_orders')
         .select('*')
         .order('created_at', { ascending: false })
@@ -44,7 +44,7 @@ export default function AdminPage() {
 
       const ordersWithItems = await Promise.all(
         (ordersData || []).map(async (order) => {
-          const { data: items, error: itemsError } = await supabase
+          const { data: items, error: itemsError } = await getSupabaseClient()
             .from('spg_feed_order_items')
             .select('*')
             .eq('order_id', order.id)

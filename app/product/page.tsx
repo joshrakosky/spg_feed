@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import { supabase, getSupabaseErrorMessage, isSupabaseConfigured } from '@/lib/supabase'
+import { getSupabaseClient, getSupabaseErrorMessage, isSupabaseConfigured } from '@/lib/supabase'
 import { Product } from '@/types'
 import AdminExportButton from '@/components/AdminExportButton'
 import HelpIcon from '@/components/HelpIcon'
@@ -45,7 +45,7 @@ export default function ProductPage() {
     }
 
     try {
-      const { data, error: fetchError } = await supabase
+      const { data, error: fetchError } = await getSupabaseClient()
         .from('spg_feed_products')
         .select('*')
         .order('customer_item_number')
