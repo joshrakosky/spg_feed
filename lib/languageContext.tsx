@@ -22,6 +22,14 @@ const translations: Record<string, string> = {
   continueShipping: 'Continue to Shipping →',
   loadingProducts: 'Loading products...',
   providesMeals: 'Provides {count} school meals',
+  viewProductDetails: 'View product details',
+  backToProductCard: 'Back to product',
+  productDescription: 'Description',
+  productSizes: 'Sizes',
+  productDimensions: 'Dimensions',
+  tbd: 'TBD',
+  selectThisProduct: 'Select this tote',
+  selected: 'Selected',
   shippingInfo: 'Shipping Information',
   provideShipping: 'Please provide your shipping details',
   shippingInstructions: 'Enter the address where your order should be shipped.',
@@ -58,15 +66,17 @@ const translations: Record<string, string> = {
     'Thank you for your SPG FEED order!\n\nYour Order Number: {orderNumber}\n\nThis order helps provide school meals for children around the world.\n\nPlease save this order number for your records.',
   programBelief:
     'We believe the things you buy should work harder for you, the planet, and our future.',
-  programSince2007:
-    'Since 2007, FEED has made continuous donations to end childhood hunger and has stretched to meet environmental goals in how we operate.',
-  programGlobalMeals: "You've helped give 128 million meals since 2007",
+  programHistory:
+    'For almost twenty years, the FEED brand has made continuous donations to help end childhood hunger, while stretching to meet environmental goals in their operations.',
+  programGlobalMeals:
+    'To date, people like you have helped us serve 128 million meals since 2007.',
   programEveryProduct:
-    'Every FEED product provides school meals to children — sometimes their only meal that day.',
-  programPartners:
-    'Your purchases support our on-the-ground partners working to alleviate hunger crises and chronic malnutrition through school feeding programs. A healthy child in the classroom grows into an educated adult with a better chance of a well-paying job. Ending childhood hunger helps lift children and their families out of generational poverty.',
-  programFuture:
-    "The meals your FEED purchases help provide are more than just calories; they're a chance at a better future.",
+    'Every FEED product provides school meals to children — sometimes their only meal that day. Your selection here supports our on-the-ground partners working to alleviate hunger crises and chronic malnutrition around the world:',
+  programImpact:
+    'A healthy child in the classroom grows into an educated adult with a better chance at a brighter future. Ending childhood hunger helps lift children and their families out of generational poverty. Products like these go well beyond the meals you’re about to provide.',
+  programThankYou:
+    'Thank you for shopping with Simon® and redeeming a FEED product.',
+  programClosing: 'Our planet appreciates you.',
   selectProductButton: 'Select Product →',
   backToProgram: '← Back to Program',
   backToLogin: '← Back',

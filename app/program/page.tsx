@@ -32,13 +32,23 @@ export default function ProgramPage() {
 
           <div className="space-y-5 text-gray-700 leading-relaxed mb-8">
             <p>{t('programBelief')}</p>
-            <p>{t('programSince2007')}</p>
-            <p className="text-center text-lg font-semibold text-black py-2">
+            <p>{t('programHistory')}</p>
+            <p className="text-lg font-semibold text-black">
               {t('programGlobalMeals')}
             </p>
             <p>{t('programEveryProduct')}</p>
-            <p>{t('programPartners')}</p>
-            <p>{t('programFuture')}</p>
+
+            <div className="py-2">
+              <img
+                src="/images/FEED_partners.jpg"
+                alt="FEED partner organizations including Certified B Corporation, No Kid Hungry, World Food Programme, and Akshaya Patra"
+                className="w-full h-auto rounded-md border border-gray-200"
+              />
+            </div>
+
+            <p>{t('programImpact')}</p>
+            <p>{t('programThankYou')}</p>
+            <p>{t('programClosing')}</p>
           </div>
 
           <MealsCounter className="mb-8" />

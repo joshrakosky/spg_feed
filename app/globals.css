@@ -77,6 +77,40 @@ input::placeholder {
   animation: emblem-bounce-4 ease-in-out infinite;
 }
 
+.product-flip-card {
+  perspective: 1000px;
+  min-height: 420px;
+}
+
+.product-flip-inner {
+  position: relative;
+  width: 100%;
+  min-height: 420px;
+  transition: transform 0.5s ease;
+  transform-style: preserve-3d;
+}
+
+.product-flip-card.is-flipped .product-flip-inner {
+  transform: rotateY(180deg);
+}
+
+.product-flip-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.product-flip-front {
+  transform: rotateY(0deg);
+}
+
+.product-flip-back {
+  transform: rotateY(180deg);
+}
+
 .btn-spg {
   background-color: var(--spg-black);
   color: var(--spg-white);
@@ -89,4 +123,16 @@ input::placeholder {
 .btn-spg:focus {
   outline: 2px solid var(--spg-black);
   outline-offset: 2px;
+}
+
+/* Soft gray flip-details button — matches emblem tone on page background */
+.btn-product-details {
+  background-color: #e5e7eb;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+}
+
+.btn-product-details:hover {
+  background-color: #d1d5db;
+  color: #4b5563;
 }
