@@ -1,6 +1,7 @@
 'use client'
 
 import { Product } from '@/types'
+import { getProductDetails } from '@/lib/productDetails'
 
 interface ProductFlipCardProps {
   product: Product
@@ -33,7 +34,7 @@ function CloseIcon() {
 }
 
 /**
- * Selectable product card with flip-to-details (description, sizes, dimensions).
+ * Selectable product card with flip-to-details (description and dimensions).
  */
 export default function ProductFlipCard({
   product,
@@ -43,6 +44,8 @@ export default function ProductFlipCard({
   onToggleFlip,
   t,
 }: ProductFlipCardProps) {
+  const details = getProductDetails(product.customer_item_number)
+
   return (
     <div
       className={`product-flip-card rounded-lg shadow-md border-2 transition-shadow hover:shadow-lg ${
@@ -97,7 +100,7 @@ export default function ProductFlipCard({
           </button>
         </div>
 
-        {/* Back — description, sizes, dimensions (TBD until product data is finalized) */}
+        {/* Back — description and dimensions from product spec data */}
         <div className="product-flip-face product-flip-back bg-white rounded-lg border border-gray-200 p-4 flex flex-col">
           <div className="flex items-start justify-between gap-2 mb-3">
             <h3 className="font-semibold text-sm text-gray-900 leading-snug">{product.name}</h3>
@@ -118,15 +121,19 @@ export default function ProductFlipCard({
           <div className="flex-1 space-y-3 text-sm text-gray-700 overflow-y-auto">
             <div>
               <p className="font-medium text-black mb-1">{t('productDescription')}</p>
-              <p>{product.description || t('tbd')}</p>
-            </div>
-            <div>
-              <p className="font-medium text-black mb-1">{t('productSizes')}</p>
-              <p>{t('tbd')}</p>
-            </div>
-            <div>
-              <p className="font-medium text-black mb-1">{t('productDimensions')}</p>
-              <p>{t('tbd')}</p>
+              {product.description && <p className="mb-2">{product.description}</p>}
+              {details?.dimensions.length ? (
+                <ul className="space-y-1">
+                  {details.dimensions.map((line) => (
+                    <li key={line.label}>
+                      <span className="font-medium text-gray-900">{line.label}:</span>{' '}
+                      {line.dimensions}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                !product.description && <p>{t('tbd')}</p>
+              )}
             </div>
           </div>
 

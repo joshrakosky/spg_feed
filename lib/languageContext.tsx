@@ -25,8 +25,6 @@ const translations: Record<string, string> = {
   viewProductDetails: 'View product details',
   backToProductCard: 'Back to product',
   productDescription: 'Description',
-  productSizes: 'Sizes',
-  productDimensions: 'Dimensions',
   tbd: 'TBD',
   selectThisProduct: 'Select this tote',
   selected: 'Selected',
